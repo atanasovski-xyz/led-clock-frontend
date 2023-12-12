@@ -1,7 +1,8 @@
 import { hexToRgb, rgbToHex } from './utils.js';
+import { led_server_url } from './utils.js';
 
-const led_server_url = 'http://192.168.86.247:8000';
 let selectedColourBox = null;
+let handling_send = false;
 
 let current_colour = [255, 255, 255];
 let off_colour = [0, 0, 0];
@@ -23,12 +24,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const sendButton = document.getElementById('send');
   sendButton.addEventListener('click', onSendClick);
 
+  // Add event listener for save button
+  const saveButton = document.getElementById('save');
+  saveButton.addEventListener('click', onSaveClick);
+
   // Add a listener to each colour button
   const colourButtons = document.querySelectorAll('.color-button');
   colourButtons.forEach((button) => {
     const color = button.getAttribute('data-color');
     button.style.backgroundColor = color;
     button.addEventListener('click', onColourClick);
+  });
+
+  // Add a listener for the custom colour picker
+  const colourPicker = document.getElementById('colorpicker');
+  colourPicker.addEventListener('input', (event) => {
+    const colour = event.target.value;
+    const button = event.target.parentElement;
+
+    current_colour = hexToRgb(colour);
+    selectedColourBox.style.backgroundColor = colour;
+    button.style.backgroundColor = colour;
   });
 
   // Add event listener for mouse move on grid
@@ -38,6 +54,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function onSendClick() {
+  if (handling_send) return;
+  handling_send = true;
+
   // Loop through cells and create pixel data
   const cells = document.querySelectorAll('.cell');
   const pixelData = [];
@@ -51,20 +70,25 @@ function onSendClick() {
     });
   });
 
+  console.log('Sending pixel data to server...')
+
   // Send pixels to server
   fetch(`${led_server_url}/matrix`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'access-control-allow-origin': '*',
     },
     body: JSON.stringify(pixelData),
   })
     .then((response) => response.json())
     .then((data) => {
       console.log('Success:', data);
+      handling_send = false;
     })
     .catch((error) => {
       console.error('Error:', error);
+      handling_send = false;
     });
 }
 
@@ -134,13 +158,7 @@ function setCellColour(cell, colour) {
 // Handle individual cell click
 function onCellClick(x, y) {
   const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
-  const colour = hexToRgb(cell.getAttribute('data-colour'));
-
-  if (colour != off_colour) {
-    setCellColour(cell, off_colour);
-  } else {
-    setCellColour(cell, current_colour);
-  }
+  setCellColour(cell, current_colour);
 }
 
 // Handle reset button click
@@ -149,5 +167,43 @@ function onResetClick() {
   cells.forEach((cell) => {
     setCellColour(cell, off_colour);
   });
+}
+
+// Handle save button click
+function onSaveClick() {
+  // const name = prompt('Enter a name for this matrix');
+  // if (!name) return;
+
+  // Loop through cells and create pixel data
+  const cells = document.querySelectorAll('.cell');
+  const pixelData = [];
+  cells.forEach((cell) => {
+    const position = [cell.getAttribute('data-y'), cell.getAttribute('data-x')]
+    const colour = hexToRgb(cell.getAttribute('data-colour'));
+
+    pixelData.push({
+      'rgb': colour,
+      'position': position,
+    });
+  });
+
+  console.log('Saving pixel data to server...')
+
+  // Send pixels to server
+  fetch(`${led_server_url}/save-matrix`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'access-control-allow-origin': '*',
+    },
+    body: JSON.stringify(pixelData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Saved as:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 

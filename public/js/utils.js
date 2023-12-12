@@ -1,4 +1,8 @@
 
+// const led_server_url = 'http://192.168.86.247:8000';
+const led_server_url = 'http://localhost:8000';
+
+
 // Converts a hex code value to a list of RGB values
 function hexToRgb(hex) {
   // BEGIN: hexToRgb
@@ -19,4 +23,4 @@ function rgbToHex(rgb) {
   // END: rgbToHex
 }
 
-export { hexToRgb, rgbToHex };
+export { hexToRgb, rgbToHex, led_server_url };
