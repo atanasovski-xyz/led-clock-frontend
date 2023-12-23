@@ -1,8 +1,5 @@
-
-// TODO: find a better way to do this
-const led_server_url = 'http://192.168.86.247:8000';
-// const led_server_url = 'http://localhost:8000';
-
+//<script>
+const led_server_url = '<%= ledServerURL %>';
 
 // Converts a hex code value to a list of RGB values
 function hexToRgb(hex) {
@@ -24,7 +21,6 @@ function rgbToHex(rgb) {
   // END: rgbToHex
 }
 
-
 // Save the current matrix to local storage
 function saveMatrixLocal(gridElement) {
   const cells = gridElement.querySelectorAll('.cell');
@@ -39,3 +35,5 @@ function saveMatrixLocal(gridElement) {
 }
 
 export { hexToRgb, rgbToHex, led_server_url, saveMatrixLocal };
+
+//</script>
