@@ -1,35 +1,25 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "packageRules": [
     {
-      "packagePatterns": [
-        "@types/body-parser",
-        "body-parser"
-      ],
+      "matchDatasources": ["npm"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "packagePatterns": ["@types/body-parser", "body-parser"],
       "groupName": "body-parser"
     },
     {
-      "packagePatterns": [
-        "@types/cors",
-        "cors"
-      ],
+      "packagePatterns": ["@types/cors", "cors"],
       "groupName": "cors"
     },
     {
-      "packagePatterns": [
-        "@types/express",
-        "express"
-      ],
+      "packagePatterns": ["@types/express", "express"],
       "groupName": "express"
     },
     {
-      "packagePatterns": [
-        "@types/node",
-        "node"
-      ],
+      "packagePatterns": ["@types/node", "node"],
       "groupName": "node"
     }
   ]
