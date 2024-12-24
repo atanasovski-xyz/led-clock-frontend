@@ -1,13 +1,36 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "packageRules": [
     {
-      "description": "Ensure @types packages don't exceed major version of dependencies",
-      "enabled": true,
-      "packagePatterns": ["^@types/"],
-      "rangeStrategy": "widen",
-      "allowedVersions": "<={{depName}}"
+      "packagePatterns": [
+        "@types/body-parser",
+        "body-parser"
+      ],
+      "groupName": "body-parser"
+    },
+    {
+      "packagePatterns": [
+        "@types/cors",
+        "cors"
+      ],
+      "groupName": "cors"
+    },
+    {
+      "packagePatterns": [
+        "@types/express",
+        "express"
+      ],
+      "groupName": "express"
+    },
+    {
+      "packagePatterns": [
+        "@types/node",
+        "node"
+      ],
+      "groupName": "node"
     }
   ]
 }
