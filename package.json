@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && cp -r src/views build/",
     "start": "node build/server.js",
-    "watch": "nodemon src/server.ts",
+    "watch": "export LED_SERVER_URL=http://localhost:8000 && nodemon --watch src/server.ts --watch public",
     "dev": "export LED_SERVER_URL=http://localhost:8000 && node build/server.js"
   },
   "keywords": [],
