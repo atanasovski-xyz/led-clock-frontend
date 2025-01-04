@@ -158,5 +158,5 @@ jobs:
       - name: Trigger deploy-driver-and-server workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: deploy-driver-and-server.yml
+          workflow: deploy-frontend.yml
           inputs: '{ "environment": "everest", "version": "${{ needs.version-increment.outputs.version }}" }'
