@@ -31,6 +31,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const saveButton = document.getElementById("save");
   saveButton.addEventListener("click", onSaveClick);
 
+  // add event listener for load button
+  const loadButton = document.getElementById("load");
+  loadButton.addEventListener("click", onLoadClick);
+
+  // Add event listener for file input
+  const fileInput = document.getElementById("file-input");
+  fileInput.addEventListener("change", onLoadFile);
+
   // Add a listener to each colour button
   const colourButtons = document.querySelectorAll(".color-button");
   colourButtons.forEach((button) => {
@@ -176,6 +184,52 @@ function onResetClick() {
   cells.forEach((cell) => {
     setCellColour(cell, off_colour);
   });
+}
+
+// Handle load button click
+function onLoadClick() {
+  // Open a file dialog
+  document.getElementById("file-input").click();
+}
+
+// Handle file input change
+function onLoadFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    // Load a png or jpg image
+    const img = new Image();
+    img.src = e.target.result;
+
+    // When the image has loaded, loop through the pixels and set the cell colours
+    // don't create a canvas element
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
+      const cells = document.querySelectorAll(".cell");
+      cells.forEach((cell) => {
+        const x = cell.getAttribute("data-x");
+        const y = cell.getAttribute("data-y");
+
+        const pixel = ctx.getImageData(y, x, 1, 1).data;
+        const colour = [pixel[0], pixel[1], pixel[2]];
+
+        setCellColour(cell, colour);
+      });
+
+      saveMatrixLocal(document);
+    };
+  };
+
+  reader.readAsDataURL(file);
 }
 
 // Handle save button click
