@@ -77,7 +77,7 @@ jobs:
           platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,
+          cache-from: type=gha
           cache-to: type=gha,mode=max
 
   build-and-push-amd64-image:
@@ -130,7 +130,7 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,
+          cache-from: type=gha
           cache-to: type=gha,mode=max
 
   # Create Github Release and Trigger Deploy
