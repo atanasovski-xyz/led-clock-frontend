@@ -36,9 +36,10 @@ function loadMatrixes() {
         matrixElement.innerHTML = `
           <div class="matrix-name">${matrixName}</div>
           <div class="matrix-buttons">
-            <button class="matrix-button" id="load-button" title="Open matrix for editing"><i class="fas fa-save"></i></button>
             <button class="matrix-button" id="send-button" title="Send matrix to device"><i class="fas fa-paper-plane"></i></button>
-            <button class="matrix-button" id="delete-button" title="Delete matrix from device"><i class="fas fa-trash"></i></button>
+            <button class="matrix-button" id="load-button" title="Open matrix for editing"><i class="fas fa-pencil"></i></button>
+            <button class="matrix-button" id="download-button" title="Download matrix"><i class="fas fa-download"></i></button>
+            <button class="matrix-button matrix-button-negative" id="delete-button" title="Delete matrix from device"><i class="fas fa-trash"></i></button>
           </div>
         `;
 
@@ -98,6 +99,8 @@ function loadMatrixes() {
         sendButton.addEventListener("click", onSendClick);
         const deleteButton = matrixElement.querySelector("#delete-button");
         deleteButton.addEventListener("click", onDeleteClick);
+        const downloadButton = matrixElement.querySelector("#download-button");
+        downloadButton.addEventListener("click", onDownloadClick);
       });
 
       // Handle page numbers
@@ -185,4 +188,39 @@ function onDeleteClick() {
     .catch((error) => {
       console.error("Error:", error);
     });
+}
+
+function onDownloadClick() {
+  // Save the matrix to a png file
+  const matrixName = this.parentElement.parentElement.getAttribute("data-id");
+  const matrixElement =
+    this.parentElement.parentElement.querySelector(".matrix-grid");
+
+  // Create a canvas element
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  canvas.width = 64;
+  canvas.height = 32;
+
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the matrix to the canvas
+  matrixElement.childNodes.forEach((cell) => {
+    const x = cell.getAttribute("data-x");
+    const y = cell.getAttribute("data-y");
+    const colour = cell.getAttribute("data-colour");
+
+    ctx.fillStyle = colour;
+    ctx.fillRect(x, y, 1, 1);
+  });
+
+  // Create a download link
+  const dataURL = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = dataURL;
+  link.download = `${matrixName}.png`;
+
+  // Click the link
+  link.click();
 }
