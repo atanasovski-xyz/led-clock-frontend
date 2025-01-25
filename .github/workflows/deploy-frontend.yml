@@ -5,9 +5,13 @@ on:
     inputs:
       environment:
         description: "Environment to deploy to"
+        type: choice
         required: true
-        default: "aurora"
-        type: string
+        options:
+          - "everest"
+          - "aurora"
+          - "tower"
+        default: "everest"
       version:
         description: "Version to deploy"
         required: true
@@ -33,16 +37,23 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      # Deploy to environment through portainer
-      - name: Deploy
-        uses: nvti/portainer-stack-deploy@main
+      # Setup docker remote context
+      - name: Set up docker context over SSH authentication
+        uses: amirmarmul/docker-context-ssh-action@v2
         with:
-          portainer-host: ${{ secrets.PORTAINER_BASE_URL }}
-          username: ${{ secrets.PORTAINER_USERNAME }}
-          password: ${{ secrets.PORTAINER_PASSWORD }}
-          endpoint-id: ${{ secrets.PORTAINER_ENDPOINT_ID }} # This is the environment to deploy to
-          stack-name: ${{ env.STACK_NAME }}
-          stack-definition: .github/deploy/docker-compose.${{ inputs.environment }}.yml
-          image: ghcr.io/danielatanasovski/led-clock-frontend:${{ inputs.version }}
-          prune-stack: True
-          pull-image: False
+          ssh-host: ${{ secrets.EVEREST_HOST }}
+          ssh-username: ${{ secrets.EVEREST_USERNAME }}
+          ssh-private-key: ${{ secrets.EVEREST_SSH_KEY }}
+          context-use: true
+
+      # Deploy / Remove the Driver and Server services
+      - name: Deploy / Remove the Driver and Server services
+        run: |
+          echo "Deploying version ${{ inputs.version }} to ${{ inputs.environment }} environment"
+
+          if [ "${{ inputs.delete }}" = true ]; then
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml down
+          else
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml pull
+            docker compose -f .github/deploy/docker-compose.${{ inputs.environment }}.yml up -d --remove-orphans --build
+          fi
