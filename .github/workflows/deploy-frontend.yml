@@ -15,6 +15,11 @@ on:
         required: true
         default: "latest"
         type: string
+      delete:
+        description: "Delete the service"
+        required: false
+        default: false
+        type: boolean
 
 env:
   STACK_NAME: "led-frontend"
