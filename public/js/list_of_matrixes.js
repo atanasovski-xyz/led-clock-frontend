@@ -32,14 +32,14 @@ function loadMatrixes() {
         matrixElement.classList.add("matrix");
         matrixElement.setAttribute("data-id", matrixName);
 
-        // Add save and send button icons
+        // Add save and send button icons - using classes instead of IDs
         matrixElement.innerHTML = `
           <div class="matrix-name">${matrixName}</div>
           <div class="matrix-buttons">
-            <button class="matrix-button" id="send-button" title="Send matrix to device"><i class="fas fa-paper-plane"></i></button>
-            <button class="matrix-button" id="load-button" title="Open matrix for editing"><i class="fas fa-pencil"></i></button>
-            <button class="matrix-button" id="download-button" title="Download matrix"><i class="fas fa-download"></i></button>
-            <button class="matrix-button matrix-button-negative" id="delete-button" title="Delete matrix from device"><i class="fas fa-trash"></i></button>
+            <button class="matrix-button send-button" title="Send matrix to device"><i class="fas fa-paper-plane"></i></button>
+            <button class="matrix-button load-button" title="Open matrix for editing"><i class="fas fa-pencil"></i></button>
+            <button class="matrix-button download-button" title="Download matrix"><i class="fas fa-download"></i></button>
+            <button class="matrix-button matrix-button-negative delete-button" title="Delete matrix from device"><i class="fas fa-trash"></i></button>
           </div>
         `;
 
@@ -47,25 +47,6 @@ function loadMatrixes() {
         fetch(`${led_server_url}/get-matrix?timestamp=${matrixName}`)
           .then((response) => response.json())
           .then((data) => {
-            // Data is recieved in the form of a strucutre like this:
-            /*
-
-            [
-              {
-                'rgb': [255, 255, 255],
-                'position': [0, 0]
-              },
-              {
-                'rgb': [255, 255, 255],
-                'position': [1, 0]
-              },
-              ...
-              ...etc..
-              ...
-            ]
-
-            */
-
             // Load data as JSON
             const matrixData = JSON.parse(data);
             const matrixElement = document.querySelector(
@@ -93,13 +74,14 @@ function loadMatrixes() {
 
         matrixesElement.appendChild(matrixElement);
 
-        const loadButton = matrixElement.querySelector("#load-button");
+        // Updated selectors to use classes instead of IDs
+        const loadButton = matrixElement.querySelector(".load-button");
         loadButton.addEventListener("click", onLoadClick);
-        const sendButton = matrixElement.querySelector("#send-button");
+        const sendButton = matrixElement.querySelector(".send-button");
         sendButton.addEventListener("click", onSendClick);
-        const deleteButton = matrixElement.querySelector("#delete-button");
+        const deleteButton = matrixElement.querySelector(".delete-button");
         deleteButton.addEventListener("click", onDeleteClick);
-        const downloadButton = matrixElement.querySelector("#download-button");
+        const downloadButton = matrixElement.querySelector(".download-button");
         downloadButton.addEventListener("click", onDownloadClick);
       });
 
@@ -147,8 +129,8 @@ function onSendClick() {
   fetch(`${led_server_url}/load-matrix?timestamp=${matrixName}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "access-control-allow-origin": "*",
+      "Content-Type": "application/json"
+      // Removed access-control-allow-origin header
     },
   })
     .then((response) => response.json())
@@ -171,7 +153,8 @@ function onDeleteClick() {
   fetch(`${led_server_url}/delete-matrix?timestamp=${matrixName}`, {
     method: "POST",
     headers: {
-      "access-control-allow-origin": "*",
+      "Content-Type": "application/json"
+      // Removed access-control-allow-origin header
     },
   })
     .then((response) => response.json())

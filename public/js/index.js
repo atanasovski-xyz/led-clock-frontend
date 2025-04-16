@@ -90,8 +90,8 @@ function onSendClick() {
   fetch(`${led_server_url}/matrix`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "access-control-allow-origin": "*",
+      "Content-Type": "application/json"
+      // Removed access-control-allow-origin header
     },
     body: JSON.stringify(pixelData),
   })
@@ -103,6 +103,41 @@ function onSendClick() {
     .catch((error) => {
       console.error("Error:", error);
       handling_send = false;
+    });
+}
+
+// Handle save button click
+function onSaveClick() {
+  // Loop through cells and create pixel data
+  const cells = document.querySelectorAll(".cell");
+  const pixelData = [];
+  cells.forEach((cell) => {
+    const position = [cell.getAttribute("data-y"), cell.getAttribute("data-x")];
+    const colour = hexToRgb(cell.getAttribute("data-colour"));
+
+    pixelData.push({
+      rgb: colour,
+      position: position,
+    });
+  });
+
+  console.log("Saving pixel data to server...");
+
+  // Send pixels to server
+  fetch(`${led_server_url}/save-matrix`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+      // Removed access-control-allow-origin header
+    },
+    body: JSON.stringify(pixelData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Saved as:", data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
 }
 
@@ -230,44 +265,6 @@ function onLoadFile(event) {
   };
 
   reader.readAsDataURL(file);
-}
-
-// Handle save button click
-function onSaveClick() {
-  // const name = prompt('Enter a name for this matrix');
-  // if (!name) return;
-
-  // Loop through cells and create pixel data
-  const cells = document.querySelectorAll(".cell");
-  const pixelData = [];
-  cells.forEach((cell) => {
-    const position = [cell.getAttribute("data-y"), cell.getAttribute("data-x")];
-    const colour = hexToRgb(cell.getAttribute("data-colour"));
-
-    pixelData.push({
-      rgb: colour,
-      position: position,
-    });
-  });
-
-  console.log("Saving pixel data to server...");
-
-  // Send pixels to server
-  fetch(`${led_server_url}/save-matrix`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "access-control-allow-origin": "*",
-    },
-    body: JSON.stringify(pixelData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Saved as:", data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
 }
 
 // Load the current matrix from local storage
