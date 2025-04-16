@@ -25,7 +25,6 @@ app.use('/api', createProxyMiddleware({
   pathRewrite: {
     '^/api': '', // Remove the /api prefix when forwarding
   },
-  logger: true,
 }));
 
 process.on("SIGTERM", process.exit);
