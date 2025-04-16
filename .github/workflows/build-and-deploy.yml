@@ -98,8 +98,8 @@ jobs:
           tag_name: ${{ needs.version-increment.outputs.version }}
 
       # Trigger the deploy-frontend workflow
-      - name: Trigger deploy-driver-and-server workflow
+      - name: Trigger deploy-frontend workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: deploy-frontend.yml
-          inputs: '{ "environment": "everest", "version": "${{ needs.version-increment.outputs.version }}" }'
+          inputs: '{ "environment": "tower", "version": "${{ needs.version-increment.outputs.version }}", "delete": false }'
