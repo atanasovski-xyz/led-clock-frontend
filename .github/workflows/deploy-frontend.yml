@@ -8,10 +8,8 @@ on:
         type: choice
         required: true
         options:
-          - "everest"
-          - "aurora"
           - "tower"
-        default: "everest"
+        default: "tower"
       version:
         description: "Version to deploy"
         required: true
@@ -41,9 +39,9 @@ jobs:
       - name: Set up docker context over SSH authentication
         uses: amirmarmul/docker-context-ssh-action@v2
         with:
-          ssh-host: ${{ secrets.EVEREST_HOST }}
-          ssh-username: ${{ secrets.EVEREST_USERNAME }}
-          ssh-private-key: ${{ secrets.EVEREST_SSH_KEY }}
+          ssh-host: ${{ secrets.TOWER_HOST }}
+          ssh-username: ${{ secrets.TOWER_USERNAME }}
+          ssh-private-key: ${{ secrets.TOWER_SSH_PRIVATE_KEY }}
           context-use: true
 
       # Deploy / Remove the Driver and Server services

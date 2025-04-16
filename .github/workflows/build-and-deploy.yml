@@ -85,8 +85,7 @@ jobs:
       actions: write
     needs:
       [
-        build-and-push-arm64-image,
-        build-and-push-amd64-image,
+        build-and-push-multiarch-image,
         version-increment,
       ]
     steps:
