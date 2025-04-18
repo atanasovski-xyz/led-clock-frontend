@@ -13,6 +13,8 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+    networks:
+      - proxy
     deploy:
       update_config:
         parallelism: 2
@@ -26,3 +28,7 @@ services:
       - "traefik.http.routers.ledfrontend.entryPoints=https"
     environment:
       - LED_SERVER_URL=https://led.atanasovski.xyz
+
+networks:
+  proxy:
+    external: true
