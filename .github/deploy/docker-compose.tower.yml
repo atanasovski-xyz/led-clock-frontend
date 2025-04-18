@@ -18,5 +18,11 @@ services:
         parallelism: 2
         delay: 10s
         failure_action: rollback
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ledfrontend.rule=Host(`draw.atanasovski.xyz`)"
+      - "traefik.http.services.ledfrontend.loadbalancer.server.port=3000"
+      - "traefik.http.services.ledfrontend.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.ledfrontend.entryPoints=https"
     environment:
       - LED_SERVER_URL=https://led.atanasovski.xyz
