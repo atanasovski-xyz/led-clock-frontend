@@ -26,8 +26,6 @@ services:
       - "traefik.http.services.ledfrontend.loadbalancer.server.port=3000"
       - "traefik.http.services.ledfrontend.loadbalancer.server.scheme=http"
       - "traefik.http.routers.ledfrontend.entryPoints=https"
-    environment:
-      - LED_SERVER_URL=https://led.atanasovski.xyz
 
 networks:
   proxy:
