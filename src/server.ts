@@ -8,9 +8,6 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 // Initialize Express app
 const app = express();
 
-// Use body-parser middleware to parse JSON requests
-app.use(bodyParser.json());
-
 app.use(
   cors({
     origin: "*",
@@ -18,14 +15,28 @@ app.use(
 );
 
 // Set up LED server proxy to avoid CORS issues
-const LED_SERVER_URL = process.env.LED_SERVER_URL || 'https://led.atanasovski.xyz:8000';
+const LED_SERVER_URL = process.env.LED_SERVER_URL || 'http://led.atanasovski.xyz:8000';
 app.use('/api', createProxyMiddleware({
   target: LED_SERVER_URL,
   changeOrigin: true,
   pathRewrite: {
     '^/api': '', // Remove the /api prefix when forwarding
   },
+  secure: false, // Allow self-signed certificates
+  on: {
+    error: (err, req, res) => {
+      console.error("Proxy error:", err);
+      if (res && 'statusCode' in res) {
+        res.statusCode = 500;
+        res.end("Proxy error");
+      }
+    }
+  },
+  logger: console,
 }));
+
+// Use body-parser middleware to parse JSON requests
+app.use(bodyParser.json());
 
 process.on("SIGTERM", process.exit);
 process.on("SIGINT", process.exit);

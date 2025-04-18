@@ -91,7 +91,6 @@ function onSendClick() {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
-      // Removed access-control-allow-origin header
     },
     body: JSON.stringify(pixelData),
   })
