@@ -24,6 +24,9 @@ on:
 env:
   STACK_NAME: "led-frontend"
 
+concurrency:
+  group: "deploy-${{ github.event.inputs.environment }}"
+
 jobs:
   deploy:
     environment: ${{ inputs.environment }}
